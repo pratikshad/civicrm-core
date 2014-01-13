@@ -27,7 +27,7 @@
 {if !empty($contactId)}
   {include file="CRM/common/contactFooter.tpl"}
 {/if}
-
+ 
 <div class="crm-footer" id="civicrm-footer">
   {include file="CRM/common/version.tpl" assign=version}
   {ts 1=$version}Powered by CiviCRM %1.{/ts}
