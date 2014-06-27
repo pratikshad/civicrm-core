@@ -653,7 +653,7 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
     }
 
     $this->set('participantIDs', $this->_participantIDS);
-
+    $contributionId = $value['contributionID'] ;
     // create line items, CRM-5313
     if ($this->_priceSetId &&
       !empty($this->_lineItem)
@@ -813,6 +813,7 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
         //send mail to primary as well as additional participants.
         $this->assign('contactID', $contactId);
         $this->assign('participantID', $participantID);
+        $this->_values['contribution_id'] = $contributionId ;
         CRM_Event_BAO_Event::sendMail($contactId, $this->_values, $participantID, $isTest);
       }
     }

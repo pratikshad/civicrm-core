@@ -393,6 +393,15 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
         $sendTemplateParams['toEmail'] = $email;
         $sendTemplateParams['cc'] = CRM_Utils_Array::value('cc_receipt', $values);
         $sendTemplateParams['bcc'] = CRM_Utils_Array::value('bcc_receipt', $values);
+        //send email with pdf invoice
+        $prefixValue = CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::CONTRIBUTE_PREFERENCES_NAME,'contribution_invoice_settings');
+        foreach ($values['lineItem'][$values['priceSetID']] as $key => $feeValue) {
+          if (array_key_exists('tax_amount', $feeValue) && isset($prefixValue['is_email_pdf'])) {
+            $pdfHtml = CRM_Contribute_BAO_ContributionPage::addInvoicePdfToEmail($values,$userID);
+            $sendTemplateParams['attachments'][] = CRM_Utils_Mail::appendPDF('Invoice.pdf',$pdfHtml);
+            break;
+          }
+        }
         list($sent, $subject, $message, $html) = CRM_Core_BAO_MessageTemplate::sendTemplate($sendTemplateParams);
       }
 
@@ -885,6 +894,21 @@ LEFT JOIN  civicrm_premiums            ON ( civicrm_premiums.entity_id = civicrm
       $sctJson = json_encode($sctJson);
     }
     return $sctJson;
+  }
+
+  /**
+   * generate html for pdf in confirmation receipt email  attachment
+   *
+   * @return array $pdfHtml
+   */
+  static function addInvoicePdfToEmail($values,$userID) {
+    $contributionID = array($values['contribution_id']);
+    $contactId = array($userID);
+    $pdfParams = array(
+      'output' => 'pdf_invoice'
+    );
+    $pdfHtml= CRM_Contribute_Form_Task_Invoice::printPDF($contributionID, $pdfParams, $contactId, $forPage = "confirmpage");
+    return $pdfHtml;
   }
 }
 

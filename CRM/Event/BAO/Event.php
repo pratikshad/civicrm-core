@@ -1191,6 +1191,24 @@ WHERE civicrm_event.is_active = 1
           $sendTemplateParams['bcc'] = CRM_Utils_Array::value('bcc_confirm',
             $values['event']
           );
+          // append invoice pdf to email
+          $prefixValue = CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::CONTRIBUTE_PREFERENCES_NAME,'contribution_invoice_settings');
+          if (isset($prefixValue['is_email_pdf'])) {
+            $priceSetID = array_keys($values['fee']);
+            foreach ($priceSetID as $key => $priceSetIDValue) {
+              if (!array_key_exists('price_'.$priceSetIDValue ,$values['params'][$values['participant']['id']])) {
+                unset($priceSetID[$key]);
+              }
+              else {
+                $priceSetKey = key($values['params'][$values['participant']['id']]['price_'.$priceSetIDValue]);
+                if (array_key_exists('tax_amount',$values['fee'][$priceSetIDValue]['options'][$priceSetKey])) {
+                  $pdfHtml = CRM_Contribute_BAO_ContributionPage::addInvoicePdfToEmail($values,$contactID);
+                  $sendTemplateParams['attachments'][] = CRM_Utils_Mail::appendPDF('Invoice.pdf',$pdfHtml);
+                  break;
+                }
+              }
+            }
+          }
           CRM_Core_BAO_MessageTemplate::sendTemplate($sendTemplateParams);
         }
       }
