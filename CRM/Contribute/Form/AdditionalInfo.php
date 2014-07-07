@@ -472,7 +472,18 @@ class CRM_Contribute_Form_AdditionalInfo {
     if (!empty($params['receive_date'])) {
       $form->assign('receive_date', CRM_Utils_Date::processDate($params['receive_date']));
     }
-
+     $template = CRM_Core_Smarty::singleton( );
+     $taxAmt = $template->get_template_vars('dataArray');
+     $eventTaxAmt = $template->get_template_vars('totalTaxAmount');
+     $prefixValue = CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::CONTRIBUTE_PREFERENCES_NAME,'contribution_invoice_settings');
+     if ( (count($taxAmt) > 0 || !empty($eventTaxAmt)) && isset($prefixValue['is_email_pdf'])) {
+       $pdfHtml = CRM_Contribute_BAO_ContributionPage::addInvoicePdfToEmail($params['contribution_id'],$params['contact_id']);
+       $sendattachments =array( CRM_Utils_Mail::appendPDF('Invoice.pdf',$pdfHtml ));
+     }
+     else {
+       $sendattachment = "";
+     }
+     
     list($sendReceipt, $subject, $message, $html) = CRM_Core_BAO_MessageTemplate::sendTemplate(
       array(
         'groupName' => 'msg_tpl_workflow_contribution',
@@ -484,6 +495,7 @@ class CRM_Contribute_Form_AdditionalInfo {
         'toEmail' => $contributorEmail,
         'isTest' => $form->_mode == 'test',
         'PDFFilename' => ts('receipt').'.pdf',
+	'attachments' => $sendattachments,
       )
     );
 
