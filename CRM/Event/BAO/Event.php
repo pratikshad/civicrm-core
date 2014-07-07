@@ -1191,6 +1191,14 @@ WHERE civicrm_event.is_active = 1
           $sendTemplateParams['bcc'] = CRM_Utils_Array::value('bcc_confirm',
             $values['event']
           );
+          // append invoice pdf to email
+          $template = CRM_Core_Smarty::singleton( );
+          $taxAmt = $template->get_template_vars('totalTaxAmount');
+          $prefixValue = CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::CONTRIBUTE_PREFERENCES_NAME,'contribution_invoice_settings');
+          if ($taxAmt && isset($prefixValue['is_email_pdf']) ) {
+            $pdfHtml = CRM_Contribute_BAO_ContributionPage::addInvoicePdfToEmail($values['contribution_id'],$contactID);
+            $sendTemplateParams['attachments'][] = CRM_Utils_Mail::appendPDF('Invoice.pdf',$pdfHtml);
+          }
           CRM_Core_BAO_MessageTemplate::sendTemplate($sendTemplateParams);
         }
       }
