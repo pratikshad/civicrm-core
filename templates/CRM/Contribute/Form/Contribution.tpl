@@ -637,8 +637,16 @@ if(event.handled !== true) {
        taxRate = 0;
     }  
     var totalAmount = cj('#total_amount').val();
-    var totalTaxAmount = Number((taxRate/100)*totalAmount)+Number(totalAmount);
-    cj( "#totalTaxAmount" ).html('Total Amount : '+totalTaxAmount);
+    var totalTaxAmount = '{/literal}{$totalTaxAmount}{literal}';
+    var taxAmount = (taxRate/100)*totalAmount.replace(/,/g,'');
+    taxAmount = isNaN (taxAmount) ? 0:taxAmount;
+    if (totalTaxAmount) {
+      var totalTaxAmount = (parseFloat(taxAmount + Number(totalAmount.replace(/,/g,''))).toFixed(2)).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+    }
+    else {
+      var totalTaxAmount = (parseFloat(taxAmount + Number(totalAmount.replace(/,/g,''))).toFixed(2)).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+    }
+    cj("#totalTaxAmount").html('Amount with tax : <span id="currencySymbolShow">'+currencySymbol+'</span> '+ totalTaxAmount);
     event.handled = true;
     }
      return false;
