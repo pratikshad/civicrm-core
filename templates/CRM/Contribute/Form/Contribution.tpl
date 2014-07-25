@@ -641,7 +641,7 @@ if(event.handled !== true) {
     var taxAmount = (taxRate/100)*totalAmount.replace(/,/g,'');
     taxAmount = isNaN (taxAmount) ? 0:taxAmount;
     if (totalTaxAmount) {
-      var totalTaxAmount = (parseFloat(taxAmount + Number(totalAmount.replace(/,/g,''))).toFixed(2)).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+      var totalTaxAmount = (parseFloat(Number(totalTaxAmount) + Number(totalAmount.replace(/,/g,''))).toFixed(2)).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
     }
     else {
       var totalTaxAmount = (parseFloat(taxAmount + Number(totalAmount.replace(/,/g,''))).toFixed(2)).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
