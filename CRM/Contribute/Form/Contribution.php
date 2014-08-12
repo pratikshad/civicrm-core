@@ -1283,6 +1283,10 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
       }
       $params['line_item'] = $lineItem;
       $params['payment_processor_id'] = $params['payment_processor'] = CRM_Utils_Array::value('id', $this->_paymentProcessor);
+      if (empty($dataArray) && $priceSetId != 1) {
+        $dataArray = array($submittedValues['tax_amount']);
+        $smarty->assign('dataArray', $dataArray);
+      }
       if (CRM_Utils_Array::value('tax_amount', $submittedValues)) {
         $params['tax_amount'] = $submittedValues['tax_amount'];
       }
