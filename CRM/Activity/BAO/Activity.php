@@ -366,7 +366,9 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity {
         'contact_id'  => $params['source_contact_id'],
         'record_type_id' => $sourceID
       );
-      self::deleteActivityContact($activityId, $sourceID);
+      if (CRM_Core_DAO::getFieldValue('CRM_Activity_DAO_ActivityContact', $activityId, 'activity_id')) {
+        self::deleteActivityContact($activityId, $sourceID);
+      }
       CRM_Activity_BAO_ActivityContact::create($acParams);
     }
 
@@ -418,7 +420,7 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity {
       }
     }
     else {
-      if (CRM_Utils_Array::value('deleteActivityAssignment', $params, TRUE)) {
+      if (CRM_Utils_Array::value('deleteActivityAssignment', $params, TRUE) && CRM_Core_DAO::getFieldValue('CRM_Activity_DAO_ActivityContact', $activityId, 'activity_id')) {
         self::deleteActivityContact($activityId, $assigneeID);
       }
     }
@@ -2684,4 +2686,3 @@ INNER JOIN  civicrm_option_group grp ON ( grp.id = val.option_group_id AND grp.n
   }
 
 }
-
