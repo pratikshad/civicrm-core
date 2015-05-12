@@ -185,10 +185,10 @@ class WebTest_Member_OfflineMembershipRenewTest extends CiviSeleniumTestCase {
     // Is status message correct?
     $this->waitForText('crm-notification-container', "{$membershipTypes['membership_type']} membership for $firstName Memberson has been added.");
 
-    $this->waitForElementPresent("xpath=//div[@id='memberships']/div/table/tbody/tr/td[9]/span[2][text()='more']/ul/li[1]/a[text()='Renew']");
+    $this->waitForElementPresent("xpath=//div[@id='memberships']//table/tbody/tr/td[9]/span[2][text()='more']/ul/li/a[text()='Renew']");
 
     // click through to the Membership Renewal Link
-    $this->click("xpath=//div[@id='memberships']/div/table/tbody/tr/td[9]/span[2][text()='more']/ul/li[1]/a[text()='Renew']");
+    $this->click("xpath=//div[@id='memberships']//table/tbody/tr/td[9]/span[2][text()='more']/ul/li/a[text()='Renew']");
 
     $this->waitForElementPresent('_qf_MembershipRenewal_cancel-bottom');
 
@@ -198,12 +198,12 @@ class WebTest_Member_OfflineMembershipRenewTest extends CiviSeleniumTestCase {
     // page was loaded
     $this->waitForTextPresent($sourceText);
 
-    $this->waitForElementPresent("xpath=//div[@id='memberships']/div/table/tbody/tr/td[9]/span[1]/a[1][text()='View']");
+    $this->waitForElementPresent("xpath=//div[@id='memberships']/div/table/tbody/tr/td[9]/span/a[contains(text(),'View')]");
 
     // click through to the membership view screen
-    $this->click("xpath=//div[@id='memberships']/div/table/tbody/tr/td[9]/span/a[1][text()='View']");
+    $this->click("xpath=//div[@id='memberships']/div/table/tbody/tr/td[9]/span/a[contains(text(),'View')]");
 
-    $this->waitForElementPresent("xpath=//button//span[contains(text(),'Done')]");
+    $this->waitForElementPresent("_qf_MembershipView_cancel-bottom");
 
     $joinDate = date('F jS, Y');
     $startDate = date('F jS, Y', strtotime("+1 month"));
